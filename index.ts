@@ -6,14 +6,19 @@ let observable = new Observable((subsciber) => {
   let counter = 1;
   console.log('start');
 
-  setInterval(() => {
+  let intervalId = setInterval(() => {
     console.log('emit', counter);
     subsciber.next(counter++);
-  }, 10000);
+  }, 5000);
 
-  subsciber.complete();
+  return () => {
+    console.log('Teardown');
+    clearInterval(intervalId);
+  };
 });
 
 let subscription = observable.subscribe({
   next: (value) => console.log(value),
 });
+
+subscription.unsubscribe();
