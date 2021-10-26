@@ -1,17 +1,23 @@
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { first, take, takeUntil, takeWhile } from 'rxjs/operators';
 
+let aliveSubscription = true;
 let observable$ = new Observable((subsciber) => {
   let counter = 1;
   console.log('start');
 
-  let intervalId = setInterval(() => {
-    console.log('emit', counter);
-    subsciber.next(counter++);
-  }, 5000);
+  // let intervalId = setInterval(() => {
+  //   console.log('emit', counter);
+  //   subsciber.next(counter++);
+  // }, 5000);
+  //subsciber.error('error');
+  subsciber.next(1);
+  subsciber.next(2);
+  subsciber.next(3);
 
   return () => {
     console.log('Teardown');
-    clearInterval(intervalId);
+    //clearInterval(intervalId);
   };
 });
 
@@ -26,8 +32,25 @@ const observer = {
   error: (err) => {
     console.log(err);
   }, //optional
-  complete: () => {}, //optional
+  complete: () => {
+    console.log('complete');
+  }, //optional
 };
 
 let subscription = observable$.subscribe(observer);
+
+//new obeservale to pass for 'takeUntil' operator
+let unsusbsciption$ = new Subject<void>();
+
+//observable$
+//takeUntil needs an observable as a parameter.
+//source observable sunscriptions ends when 'unsusbsciption$' observable completes
+// .pipe(takeUntil(unsusbsciption$ ))
+// .subscribe(observer);
+
+//to end 'observable$' below steps must be executed.
+//We cannot exclude any steps give below.
+unsusbsciption$.next();
+unsusbsciption$.complete();
+
 subscription.unsubscribe();
