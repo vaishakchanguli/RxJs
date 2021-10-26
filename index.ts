@@ -37,20 +37,15 @@ const observer = {
   }, //optional
 };
 
-let subscription = observable$.subscribe(observer);
+let subscription1 = observable$.subscribe(observer);
+subscription1.unsubscribe();
 
 //new obeservale to pass for 'takeUntil' operator
 let unsusbsciption$ = new Subject<void>();
 
-//observable$
-//takeUntil needs an observable as a parameter.
-//source observable sunscriptions ends when 'unsusbsciption$' observable completes
-// .pipe(takeUntil(unsusbsciption$ ))
-// .subscribe(observer);
+observable$.pipe(takeUntil(unsusbsciption$)).subscribe(observer);
 
 //to end 'observable$' below steps must be executed.
 //We cannot exclude any steps give below.
 unsusbsciption$.next();
 unsusbsciption$.complete();
-
-subscription.unsubscribe();
