@@ -1,54 +1,40 @@
-import { Observable, Subject } from 'rxjs';
-import { first, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-let aliveSubscription = true;
-let observable$ = new Observable((subsciber) => {
+const observer = {
+  next: (value) => console.log(`next:${value}`), //required
+  error: (err) => console.log(console.log('error')), //optional
+  complete: () => console.log('complete'), //optional
+};
+
+const observable$ = new Observable((subsciber) => {
   let counter = 1;
   console.log('start');
 
-  // let intervalId = setInterval(() => {
-  //   console.log('emit', counter);
-  //   subsciber.next(counter++);
-  // }, 5000);
-  //subsciber.error('error');
-  subsciber.next(1);
-
-  subsciber.next(2);
-  subsciber.next(3);
+  const intervalId = setInterval(() => {
+    //interval to emit async value endlessly
+    console.log('emit', counter);
+    subsciber.next(counter++);
+    if (counter > 3) {
+      //cancel subscription
+      subsciber.complete();
+    }
+  }, 2000);
 
   return () => {
     console.log('Teardown');
-    //clearInterval(intervalId);
+    clearInterval(intervalId);
   };
 });
 
-// let subscription = observable$ .subscribe({
-//   next: (value) => console.log(value),
-// });
+observable$.subscribe(observer);
 
-const observer = {
-  next: (value) => {
-    console.log(value);
-  }, //required
-  error: (err) => {
-    console.log(err);
-  }, //optional
-  complete: () => {
-    console.log('complete');
-  }, //optional
-};
+// subscription1.unsubscribe();
 
-let subscription1 = observable$.subscribe(observer);
-subscription1.unsubscribe();
+//takeUntil
+//let unsusbsciption$ = new Subject<void>();
+//const unsusbsciption$ = of([1, 2, 3, 4]);
 
-//new obeservale to pass for 'takeUntil' operator
-let unsusbsciption$ = new Subject<void>();
+//observable$.pipe(takeUntil(unsusbsciption$)).subscribe(observer);
 
-observable$.pipe(takeUntil(unsusbsciption$)).subscribe(observer);
-
-//to end 'observable$' below steps must be executed.
-//We cannot exclude any steps give below.
-unsusbsciption$.next();
-unsusbsciption$.complete();
-
-// https://benlesh.medium.com/rxjs-dont-unsubscribe-6753ed4fda87
+//unsusbsciption$.next();
+//unsusbsciption$.complete();
