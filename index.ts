@@ -12,6 +12,7 @@ let observable$ = new Observable((subsciber) => {
   // }, 5000);
   //subsciber.error('error');
   subsciber.next(1);
+
   subsciber.next(2);
   subsciber.next(3);
 
