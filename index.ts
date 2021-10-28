@@ -10,4 +10,8 @@ interval(2000)
 
 // Logs:
 // 0
+// 1
+// 2
+// 3
+// 4
 // Completed
