@@ -1,4 +1,12 @@
-import { Observable } from 'rxjs';
+import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
+
+const obs$ = new Observable((subsciber) => {
+  subsciber.next('Hello');
+  subsciber.next('vaishak');
+  subsciber.next('chan');
+  subsciber.complete();
+});
 
 const observer = {
   next: (value) => console.log(`next:${value}`), //required
@@ -26,15 +34,8 @@ const observable$ = new Observable((subsciber) => {
   };
 });
 
-observable$.subscribe(observer);
+let alive = true;
 
-// subscription1.unsubscribe();
+observable$.pipe(takeWhile(() => alive)).subscribe(observer);
 
-//takeUntil
-//let unsusbsciption$ = new Subject<void>();
-//const unsusbsciption$ = of([1, 2, 3, 4]);
-
-//observable$.pipe(takeUntil(unsusbsciption$)).subscribe(observer);
-
-//unsusbsciption$.next();
-//unsusbsciption$.complete();
+setTimeout(() => (alive = false));
