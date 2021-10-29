@@ -1,17 +1,10 @@
-import { interval } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { zip, of, from } from 'rxjs';
 
-interval(2000)
-  .pipe(take(5))
-  .subscribe({
-    next: (value) => console.log(value),
-    complete: () => console.log('Complete'),
-  });
+let age$ = of(27, 25);
+let name$ = from(['Foo', 'Bar', 'Beer']);
+let isDev$ = of(true, true, false, false);
 
-// Logs:
-// 0
-// 1
-// 2
-// 3
-// 4
-// Completed
+zip([age$, name$, isDev$]).subscribe({
+  next: (value) => console.log(value),
+  complete: () => console.log('Complete'),
+});
