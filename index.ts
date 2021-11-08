@@ -1,31 +1,9 @@
-import { zip, of, from, Observable, combineLatest } from 'rxjs';
-import { take } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs';
 
-let age$ = new Observable((subscriber) => {
-  subscriber.next(1);
-  subscriber.next(2);
-  subscriber.next(3);
-  return () => {
-    console.log('age$ teardown');
-  };
-});
-let name$ = new Observable((subscriber) => {
-  subscriber.next('Foo');
-  subscriber.complete();
-  subscriber.next('Bar');
-  subscriber.next('beer');
-  return () => {
-    console.log('name$ teardown');
-  };
-});
+import { interval } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 
-let combine$ = combineLatest([age$, name$])
-  .pipe(take(2))
-  .subscribe({
-    next: (value) => console.log(value),
-    complete: () => console.log('Complete'),
-  });
-
-setTimeout(() => {
-  combine$.unsubscribe();
-}, 2000);
+interval(1000)
+  .pipe(debounce((i) => interval(200 * i)))
+  .subscribe((value) => console.log('Next', value));
