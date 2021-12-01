@@ -14,7 +14,9 @@ let timer$ = of('hello').pipe(tap((value) => console.log('tap', value)));
 merge(timer$, interval$).subscribe({
   next: (value) => {
     console.log(value);
-    timer(1).subscribe(() => {});
+    timer(1).subscribe(() => {
+      console.log('in timer');
+    });
   },
   error: () => {},
   complete: () => {
