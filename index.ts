@@ -1,13 +1,15 @@
-import { from, of, concat, interval } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, of, concat, interval, merge } from 'rxjs';
+import { take, tap, delay, concatMap } from 'rxjs/operators';
 
 let interval$ = interval(1000).pipe(take(5));
-let timer$ = of(
-  setTimeout(() => {
-    return 'hello';
-  }, 2000)
+let timer$ = of('hello').pipe(
+  tap((value) => console.log('tap', value)),
+  take(1)
 );
 
-concat(timer$, interval$).subscribe((value) => {
-  console.log(value);
+merge(timer$, interval$).subscribe({
+  next: (value) => {
+    console.log(value);
+  },
+  complete: () => console.log('completed'),
 });
